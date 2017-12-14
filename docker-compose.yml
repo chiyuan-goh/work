@@ -25,7 +25,7 @@ services:
 
     migration:
       image: ldcsdweb_web
-      restart: unless-stopped
+      restart: on-failure
       command: python manage.py migrate --noinput
       volumes:
         - .:/code
