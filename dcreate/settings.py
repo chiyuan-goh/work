@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'dcompare.apps.DcompareConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -126,3 +127,16 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+LOGGING = {
+    'version': 1,
+    'handlers':{
+      'console': {'class': 'logging.StreamHandler'}
+    },
+    'loggers': {
+        'dcompare': {
+            'level': 'DEBUG',
+            'handlers': ['console']
+        }
+    }
+}

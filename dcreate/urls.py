@@ -15,7 +15,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from dcompare.views import DocUploadView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('compare', DocUploadView.as_view(), name='compare'),
 ]
