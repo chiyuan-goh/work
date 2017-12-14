@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+    db:
+      image: mysql
+      ports:
+        - "3306:3306"
+      environment:
+        - MYSQL_ROOT_PASSWORD=ilovemas
+        - MYSQL_DATABASE=ldcsd
+
+    web:
+        build: .
+        command: python3 manage.py runserver 0.0.0.0:8000
+        volumes:
+          - .:/code
+        ports:
+          - "8000:8000"
+        depends_on:
+          - db
+          - migration
+        links:
+          - db:mydb
+        restart: unless-stopped
+
+    migration:
+      image: ldcsdweb_web
+      restart: unless-stopped
+      command: python manage.py migrate --noinput
+      volumes:
+        - .:/code
+      depends_on:
+        - db
+      links:
+        - db:mydb
+
