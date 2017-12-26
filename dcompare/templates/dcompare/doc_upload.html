@@ -10,7 +10,7 @@
     <form action="/compare" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form }}
-        <button class="btn btn-default" type="submit">Submit</button>
+        <button class="btn btn-primary" type="submit">Submit</button>
     </form>
 
     {% include "dcompare/tail_static.html" %}
