@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    {% include "dcompare/head_static.html" %}
     <title>Title</title>
 </head>
 <body>
@@ -10,8 +10,9 @@
     <form action="/compare" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form }}
-        <input type="submit" value="Submit"/>
+        <button class="btn btn-default" type="submit">Submit</button>
     </form>
 
+    {% include "dcompare/tail_static.html" %}
 </body>
 </html>

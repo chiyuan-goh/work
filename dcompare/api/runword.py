@@ -6,7 +6,7 @@ python version: 3.6
 performs the comparison logic based on the output from compare.py and outputs summary.docx.
 """
 
-from compare2 import DocCompare
+from .compare2 import DocCompare
 from docx import Document
 from docx.shared import Inches, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_COLOR_INDEX
@@ -15,6 +15,7 @@ from docx.oxml import parse_xml
 import pdb
 import difflib
 import re
+import logging
 
 
 stop_words = ['in', 'the', 'of', 'or', 'to', 'with', 'and', 'on', 'without']
@@ -80,6 +81,125 @@ def style_diffs(para, text, opcodes, is_a):
         
         
         
+def run2(files, skip_nochange = True):
+    #TODO: ideally this should yield {["section name": [{"row name": ["text1", "text2", "text3"]}]]
+    """
+    Compares tender documents and groups them according to sections and clauses in a table format.
+    Outputs a docx document.
+    """
+    ret = {}
+    sect_colors = ['7BA65D', 'B6D6F2', 'D9A9BF', 'D9D9D9']
+
+    dcom = DocCompare()
+    for file1 in files:
+        dcom.add_doc(file1)
+
+    contents = dcom.all_contents()
+    ret['filenames'] = dcom.documents
+
+    # set content rows
+    bigsection_names = contents[0].keys()
+
+    count = 0
+
+    # each section
+    for bs_idx, bs_name in enumerate(bigsection_names):
+        row_headers = list(set([k for d in contents for k in d[bs_name].keys()]))
+        exclude = []
+
+        section_contents = []
+
+        # each clause in current section
+        for header_idx, header in enumerate(row_headers):
+            if header in exclude:
+                continue
+
+            sim = []
+
+            # cur_row = table.add_row().cells
+            # cur_row[0].text = header
+
+            matched_clauses = [find_doc_clause(header, row_headers, header_idx, doc, bs_name, bigsection_names, bs_idx) \
+                               for doc_idx, doc in enumerate(contents)]
+
+            hashes = set([m[0]['hash'] if m is not None else 'hello world' for m in matched_clauses])
+
+            compare_indices = []
+            added_hashes = []
+            seqm = None
+            oc = None
+
+            #this is to change there are 2 distinct columns in this row.
+            if len(hashes) == 2 and 'hello world' not in hashes:
+                for i, (dcontent, dclause, dsect) in enumerate(matched_clauses):
+                    if dcontent['hash'] in hashes and dcontent['hash'] not in added_hashes:
+                        compare_indices.append(i)
+                        added_hashes.append(dcontent['hash'])
+
+                seqm = difflib.SequenceMatcher(None,
+                                               "\n\n".join([process_paragraph(para.text) for para in
+                                                            matched_clauses[compare_indices[0]][0]['section']]),
+                                               "\n\n".join([process_paragraph(para.text) for para in
+                                                            matched_clauses[compare_indices[1]][0]['section']])
+                                               )
+                oc = seqm.get_opcodes()
+                assert len(added_hashes) == 2
+
+                # if header == 'acceptance of tender proposal':
+                #    pdb.set_trace()
+
+            c1 = 0
+            c2 = 0
+            row_text = []
+            print("---------------")
+            print(matched_clauses)
+            for i, m in enumerate(matched_clauses):
+                t = ''
+                if m is not None:
+                    clause_content, clause_name, sect = m
+                    changed = False
+                    if bs_name == sect:
+                        exclude.append(clause_name)
+                    else:
+                        contents[i][sect].pop(clause_name)
+                        t = t + "This clause is originally in {}\n".format(sect)
+                        changed = True
+
+                    if clause_name != header:
+                        t = t + "This clause is originally named {}\n".format(clause_name)
+                        changed = True
+
+                    if changed:
+                        t = t + "---------------------------------------------------------------\n\n"
+
+                if len(hashes) == 1:
+                    t += "NO CHANGES"
+
+                # elif oc is not None and (c1 == 0 or c2 == 0): #display only 2 columns if there are 2 unique columns
+                #     clause_content, clause_name, sect = m
+                #     # p = cur_row[i + 1].add_paragraph()
+                #     # p.add_run(t)
+                #     if clause_content['hash'] == added_hashes[0]:
+                #         # style_diffs(p, seqm.a, oc, True)
+                #         c1 += 1
+                #     else:
+                #         # style_diffs(p, seqm.b, oc, False)
+                #         c2 += 1
+                #     #continue
+
+                elif m is not None:
+                    t = t + "\n\n".join([para.text for para in clause_content['section']])
+
+                # cur_row[i + 1].text = t
+                row_text.append(t)
+
+            section_contents.append({'section_name':header, 'section': row_text})
+
+        yield {'bs_name':bs_name, 'sections': section_contents}
+
+
+    #print("total count: {}".format(count))
+    #summ.save("summary.docx")
 
 
 def run(files, skip_nochange=True):

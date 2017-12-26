@@ -15,9 +15,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from dcompare.views import DocUploadView
+from django.views.generic import TemplateView
+from dcompare.views import DocUploadView, display_table
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('compare', DocUploadView.as_view(), name='compare'),
+    path('compare/success', display_table)
+    # path('compare/success', TemplateView.as_view(template_name='dcompare/table.html'))
 ]

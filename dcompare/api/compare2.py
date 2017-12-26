@@ -10,13 +10,13 @@ from docx import Document
 import pdb
 import hashlib
 import re
-from test import iter_block_items
+from .test import iter_block_items
 from docx.table import Table
 from docx.text.paragraph import Paragraph
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 
 class DocCompare(object):
-"""Parses a tender document and return a document in terms of map<big_section, <small_clause, clause_content>>"""
+    """Parses a tender document and return a document in terms of map<big_section, <small_clause, clause_content>>"""
     def __init__(self):
         self.documents = []
 
@@ -66,7 +66,7 @@ class DocCompare(object):
         for num, p in enumerate(all_blocks):
             is_header = self.is_clause_header(p)
             is_bigheader = self.is_bigsection_header(p)
-            
+
             #if type(p) == Paragraph and p.text.lower().strip().endswith("in performance"):
             #   pdb.set_trace()
             
@@ -130,7 +130,7 @@ class DocCompare(object):
                 
                 #if k == "withdrawal of tender proposal": 
                  #   pdb.set_trace()
-        
+        print(bigsections)
         return bigsections
 
 if __name__ == '__main__':

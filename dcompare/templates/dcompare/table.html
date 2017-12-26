@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% include "dcompare/head_static.html" %}
+    <title>Compare</title>
+</head>
+
+<body>
+
+</body>
+    <h1>hello world!</h1>
+
+    <table>
+        <tr>
+            <th></th>
+            {% for f in compare_table.filenames %}
+                <th>{{ f }}</th>
+            {% endfor %}
+
+            {% for section_dict in compare_table.components %}
+                <div> there is a big section called {{ section_dict.bs_name }}</div>
+                {% for s in section_dict.sections %}
+                    <div>there is a section name called {{ s.section_name }}</div>
+                    {% for text in s.section %}
+                        this is some text called {{ text }}
+                    {% endfor %}
+                {% endfor %}
+            {% endfor %}
+        </tr>
+
+    </table>
+
+    <button class="btn btn-default">Generate Word Document</button>
+
+    {% include "dcompare/tail_static.html" %}
+<body>
+
+</body>
+</html>
