@@ -2,17 +2,19 @@
 <html lang="en">
 <head>
     {% include "dcompare/head_static.html" %}
-    <title>Title</title>
+    <title>Upload Documents to compare</title>
 </head>
 <body>
-    <h1>hello world</h1>
 
+<div class="container">
+    <h4>Select >1 Documents To Compare</h4>
     <form action="/compare" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form }}
         <button class="btn btn-primary" type="submit">Submit</button>
     </form>
+</div>
 
-    {% include "dcompare/tail_static.html" %}
+{% include "dcompare/tail_static.html" %}
 </body>
 </html>

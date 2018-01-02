@@ -19,6 +19,7 @@ from django.views.generic import TemplateView
 from dcompare.views import DocUploadView, display_table
 
 urlpatterns = [
+    path('', TemplateView.as_view(template_name='dcompare/splash.html')),
     path('admin/', admin.site.urls),
     path('compare', DocUploadView.as_view(), name='compare'),
     path('compare/success', display_table)

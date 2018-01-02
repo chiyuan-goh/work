@@ -1,11 +1,19 @@
 .compare-add {
-    background-color: #e6ffed;
+    background-color: #cdffd8;
 }
 
 .compare-del {
-    background-color: #ffeef0;
+    background-color: #ffdce0;
 }
 
 .compare-rep {
     background-color: #dbedff;
+}
+
+.modal-right {
+  border-right: 1px  solid #c1c1c1;
+}
+
+.hide {
+    visibility:hidden;
 }

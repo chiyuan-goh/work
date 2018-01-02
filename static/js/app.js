@@ -25,6 +25,7 @@ var map2string = function(text) {
 }
 
 var run_compare = function(text1, text2){
+    //text1 text2 is html
     var t1 = text1.trim();
     var t2 = text2.trim();
 
@@ -51,9 +52,12 @@ var run_compare = function(text1, text2){
     return opcodes;
 }
 
+//TODO: there is some bug here when highlighting breaks on paragraph :(
 var drawModal = function(text1, text2, opcodes){
-    var t1 = "<div>";
-    var t2 = "<div>";
+    var t1 = "<div class='col-md-6 modal-right'><p>";
+    var t2 = "<div class='col-md-6'><p>";
+
+    var changIdx = 1;
 
     for (var i = 0; i < opcodes.length; i++){
         var op = opcodes[i][0];
@@ -63,17 +67,20 @@ var drawModal = function(text1, text2, opcodes){
         var t2e = opcodes[i][4];
 
         if (op == 'replace'){
-            t1 += "<span class='compare-rep'>" + text1.substring(t1s, t1e) + "</span>" + " ";
-            t2 += "<span class='compare-rep'>" + text2.substring(t2s, t2e) + "</span>" + " ";
+            t1 += "<span class='compare-rep'>" + text1.substring(t1s, t1e) + "<sup>" + changIdx + "</sup></span>" + " ";
+            t2 += "<span class='compare-rep'>" + text2.substring(t2s, t2e) + "<sup>" + changIdx + "</sup></span>" + " ";
+            changIdx++;
         }
         else if (op == 'delete'){
-            t1 += "<span class='compare-del'>" + text1.substring(t1s, t1e) + "</span>" + " ";
+            t1 += "<span class='compare-del'>" + text1.substring(t1s, t1e) + "<sup>" + changIdx + "</sup></span>" + " ";
             t2 += text2.substring(t2s, t2e) + " ";
+            changIdx++;
         }
         else if (op == 'insert'){
             t1 += text1.substring(t1s, t1e) + " ";
-            t2 += "<span class='compare-add'>" + text2.substring(t2s, t2e) + "</span>" + " ";
+            t2 += "<span class='compare-add'>" + text2.substring(t2s, t2e) + "<sup>" + changIdx + "</sup></span>" + " ";
             console.log("im here");
+            changIdx++;
         }
         else if (op == 'equal'){
             t1 += text1.substring(t1s, t1e) + " ";
@@ -81,10 +88,23 @@ var drawModal = function(text1, text2, opcodes){
         }
     }
 
-    t1 += "</div>";
-    t2 += "</div>";
+    t1 += "</p></div>";
+    t2 += "</p></div>";
+    t1 = t1.replace('\n', "</p><p>");
+    t2 = t2.replace('\n', "</p><p>");
 
-    $(".modal-body").html("<p>" + t1 + "</p>" + "<hr>" + "<p>" + t2 + "</p>");
+
+    // for (var i = 0; i < t1.length; i++){
+    //     if (t1.charAt(i) == '\n')
+    //         t1 = t1.substring(0, i) + "</p><p>" + t1.substring(i + 1);
+    // }
+    //
+    //     for (var i = 0; i < t2.length; i++){
+    //     if (t2.charAt(i) == '\n')
+    //         t2 = t2.substring(0, i) + "</p><p>" + t2.substring(i + 1);
+    // }
+
+    $(".modal-body").html(t1 + "<hr>" + t2);
 }
 
 $(document).ready(function(){
@@ -92,6 +112,10 @@ $(document).ready(function(){
 
     $("td").click(function(){
         $(this).toggleClass(selected_cls);
+    });
+
+    $("#match").click(function(){
+        $("sup").toggleClass("hide");
     });
 
     $("html").keypress(function(event){
@@ -103,14 +127,20 @@ $(document).ready(function(){
             }
             else {
                 //step 1: run this through
-                var text1 = $(td_tags[0]).text();
-                var text2 = $(td_tags[1]).text();
+                var text1 = $(td_tags[0]).html();
+                var text2 = $(td_tags[1]).html();
+
+                text1 = text1.substring(3, text1.length-4);
+                text2 = text2.substring(3, text2.length-4);
+                text1 = text1.replace("</p><p>", "\n");
+                text2 = text2.replace("</p><p>", "\n");
 
                 var opcodes = run_compare(text1, text2);
                 drawModal(text1.trim(), text2.trim(), opcodes);
+                $('#diffModal').modal();
             }
             //console.log("key is pressed. preform compare");
-            $('#diffModal').modal();
+
         }
 
     });

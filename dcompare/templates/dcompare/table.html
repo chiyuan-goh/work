@@ -1,4 +1,4 @@
-{%  load replace_newline %}
+{% load replace_newline %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -10,20 +10,26 @@
 <body>
 {% include "dcompare/diff_modal.html" %}
 
+
 <div class="container-fluid">
     <h1>Parsed Results</h1>
+
+    <div class="btn-group row" role="group" arial-label="basic example">
+        <button type="button" class="btn btn-secondary">Generate Word Document</button>
+        <a href="{% url 'compare' %}" role="button" class="btn btn-secondary">Compare Again</a>
+    </div>
 
     <table class="table table-bordered table-hover">
         <tr>
             <th></th>
             {# for each file column #}
             {% for f in compare_table.filenames %}
-                <th>{{ f }}</th>
+                <th style="text-align:center">{{ f }}</th>
             {% endfor %}
 
             {% for section_dict in compare_table.components %}
                 <tr>
-                    <td colspan="{{ compare_table.filenames|length|add:1 }}">{{ section_dict.bs_name }}</td>
+                    <td style="text-align: center" colspan="{{ compare_table.filenames|length|add:1 }}">{{ section_dict.bs_name }}</td>
                 </tr>
                 {% for s in section_dict.sections %}
                     <tr>
@@ -38,7 +44,7 @@
 
     </table>
 
-    <button class="btn btn-primary">Generate Word Document</button>
+
 </div>
 {% include "dcompare/tail_static.html" %}
 
