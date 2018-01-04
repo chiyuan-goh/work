@@ -67,20 +67,15 @@ var drawModal = function(text1, text2, opcodes){
         var t2e = opcodes[i][4];
 
         if (op == 'replace'){
-            t1 += "<span class='compare-rep'>" + text1.substring(t1s, t1e) + "<sup>" + changIdx + "</sup></span>" + " ";
-            t2 += "<span class='compare-rep'>" + text2.substring(t2s, t2e) + "<sup>" + changIdx + "</sup></span>" + " ";
+            t1 += "<font class='compare-rep'>" + text1.substring(t1s, t1e) + "<sup>" + changIdx + "</sup></font>" + " ";
+            t2 += "<font class='compare-rep'>" + text2.substring(t2s, t2e) + "<sup>" + changIdx + "</sup></font>" + " ";
             changIdx++;
         }
         else if (op == 'delete'){
-            t1 += "<span class='compare-del'>" + text1.substring(t1s, t1e) + "<sup>" + changIdx + "</sup></span>" + " ";
-            t2 += text2.substring(t2s, t2e) + " ";
-            changIdx++;
+            t1 += "<font class='compare-del'>" + text1.substring(t1s, t1e) + "</font> ";
         }
         else if (op == 'insert'){
-            t1 += text1.substring(t1s, t1e) + " ";
-            t2 += "<span class='compare-add'>" + text2.substring(t2s, t2e) + "<sup>" + changIdx + "</sup></span>" + " ";
-            console.log("im here");
-            changIdx++;
+            t2 += "<font class='compare-add'>" + text2.substring(t2s, t2e) + "</font> ";
         }
         else if (op == 'equal'){
             t1 += text1.substring(t1s, t1e) + " ";
