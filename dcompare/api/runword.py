@@ -163,6 +163,7 @@ def run2(files, skip_nochange = True):
 
             #for each document what is the matched clause in that document
             for i, m in enumerate(matched_clauses):
+                #TODO: do this of changing text at home
                 org_name = ''
                 org_section = ''
                 t = ''
