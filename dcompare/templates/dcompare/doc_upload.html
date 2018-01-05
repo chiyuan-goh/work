@@ -9,9 +9,11 @@
 <div class="container">
     <h4>Select >1 Documents To Compare</h4>
     <form action="/compare" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form }}
-        <button class="btn btn-primary" type="submit">Submit</button>
+        <div class="form-group">
+            {% csrf_token %}
+            {{ form }}
+            <button class="btn btn-primary" type="submit">Submit</button>
+        </div>
     </form>
 </div>
 

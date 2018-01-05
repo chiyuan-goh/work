@@ -34,18 +34,25 @@ def remove_stopwords(s):
     no_stop = [f for f in s.split(" ") if f not in stop_words]
     return " ".join(no_stop)
     
-def find_doc_clause(clause, cur_clauses, clause_idx, doc, sect_name, sections, sect_idx, tol=.7):
-    if clause in doc[sect_name]:
-        return doc[sect_name][clause], clause, sect_name 
+def find_doc_clause(clause, cur_clauses, clause_idx, document, sect_name, sections, sect_idx, tol=.7):
+    """
+    Given a clause (from 1 document), return the same clause in from another document
+    :return: (clause text, clause name, section name)
+    """
+    #cluase in current section, skip
+    if clause in document[sect_name]:
+        return document[sect_name][clause], clause, sect_name
     
-    #check under other sections
+    #doc in current
     for s in list(sections)[sect_idx + 1:]:
-        if clause in doc[s]:
-            return doc[s][clause], clause, s
-    
+        if clause in document[s]:
+            return document[s][clause], clause, s
+
+    #edit distance betewen ground truth clause and prospecticve clauses. match max score clause if
+    #above certain clause
     ratios = []
     for s in list(sections)[sect_idx : ]:
-        for clause2 in doc[s].keys():
+        for clause2 in document[s].keys():
             if clause2 in cur_clauses[clause_idx + 1: ]:
                 tup = (s, difflib.SequenceMatcher(None, clause, clause2).ratio(), clause2)
                 ratios.append(tup)
@@ -55,7 +62,7 @@ def find_doc_clause(clause, cur_clauses, clause_idx, doc, sect_name, sections, s
         
     max_sect, max_ratio, max_clause = max(ratios, key = lambda i: i[1])
     if max_ratio >= tol: #TODO: maybe to add in additional check here
-        return doc[max_sect][max_clause], max_clause, max_sect# == sect_name
+        return document[max_sect][max_clause], max_clause, max_sect# == sect_name
     else:
         return None
 
@@ -152,25 +159,29 @@ def run2(files, skip_nochange = True):
             c2 = 0
             row_text = []
             print("---------------")
-            print(matched_clauses)
+            # print(matched_clauses)
+
+            #for each document what is the matched clause in that document
             for i, m in enumerate(matched_clauses):
+                org_name = ''
+                org_section = ''
                 t = ''
                 if m is not None:
                     clause_content, clause_name, sect = m
-                    changed = False
+                    # changed = False
                     if bs_name == sect:
                         exclude.append(clause_name)
                     else:
                         contents[i][sect].pop(clause_name)
                         t = t + "This clause is originally in {}\n".format(sect)
-                        changed = True
+                        # changed = True
 
                     if clause_name != header:
                         t = t + "This clause is originally named {}\n".format(clause_name)
-                        changed = True
+                        # changed = True
 
-                    if changed:
-                        t = t + "---------------------------------------------------------------\n\n"
+                    # if changed:
+                    #     t = t + "---------------------------------------------------------------\n\n"
 
                 if len(hashes) == 1:
                     t += "NO CHANGES"

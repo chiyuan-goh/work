@@ -51,6 +51,8 @@ class DocCompare(object):
     def is_valid_bigsection(self, block):
         text = block.rows[0].cells[0].text
         h = text.split(":")[1].strip()
+        print(text)
+        print(h.lower() in ['instructions to tenderers', 'conditions of contract', 'requirement specifications'])
         return h.lower() in ['instructions to tenderers', 'conditions of contract', 'requirement specifications'], text.strip()
 
         
