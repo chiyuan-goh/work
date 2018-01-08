@@ -25,3 +25,7 @@
 .nav-tabs {
     margin-bottom: 2rem;
 }
+
+.bg-faded {
+    background-color:#f7f7f7;
+}
