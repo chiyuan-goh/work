@@ -104,9 +104,11 @@ var drawModal = function(text1, text2, opcodes){
 
 $(document).ready(function(){
     var selected_cls = 'hl-clause';
+    var hl_cls="c-clause";
 
     $("td").click(function(){
         $(this).toggleClass(selected_cls);
+        $(this).toggleClass(hl_cls);
     });
 
     $("#match").click(function(){
@@ -114,8 +116,8 @@ $(document).ready(function(){
     });
 
     $("html").keypress(function(event){
-        if (event.charCode == 99){
-            var td_tags = $("." + selected_cls);
+        if (event.charCode == 99){selected_cls
+            var td_tags = $("." + hl_cls);
 
             if(td_tags.length != 2){
                 alert("You must select exactly 2 clause content to compare!");
