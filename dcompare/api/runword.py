@@ -163,7 +163,6 @@ def run2(files, skip_nochange = True):
 
             #for each document what is the matched clause in that document
             for i, m in enumerate(matched_clauses):
-                #TODO: do this of changing text at home
                 org_name = ''
                 org_section = ''
                 t = ''
@@ -174,11 +173,13 @@ def run2(files, skip_nochange = True):
                         exclude.append(clause_name)
                     else:
                         contents[i][sect].pop(clause_name)
-                        t = t + "This clause is originally in {}\n".format(sect)
+                        org_section = sect
+                        # t = t + "This clause is originally in {}\n".format(sect)
                         # changed = True
 
                     if clause_name != header:
-                        t = t + "This clause is originally named {}\n".format(clause_name)
+                        org_name = clause_name
+                        # t = t + "This clause is originally named {}\n".format(clause_name)
                         # changed = True
 
                     # if changed:
@@ -203,7 +204,8 @@ def run2(files, skip_nochange = True):
                     t = t + "\n\n".join([para.text for para in clause_content['section']])
 
                 # cur_row[i + 1].text = t
-                row_text.append(t)
+                # row_text.append(t)
+                row_text.append({'text': t, 'org_name': org_name, 'org_section': org_section})
 
             section_contents.append({'section_name':header, 'section': row_text})
 

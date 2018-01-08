@@ -36,8 +36,15 @@
                     {% for s in section_dict.sections %}
                         <tr>
                             <td>{{ s.section_name }}</td>
-                            {% for text in s.section %}
-                                <td><p>{{ text|replace_newline|safe }} </p></td>
+                            {% for clause in s.section %}
+                                <td>
+                                    {% if clause.org_section %}
+                                        <div class="alert alert-info alert-dismissible fade show"  role="alert">
+                                            <small>Clause is in {{ clause.org_section }}.</small>
+                                        </div>
+                                    {% endif %}
+                                    <p>{{ clause.text|replace_newline|safe }} </p>
+                                </td>
                             {% endfor %}
                         </tr>
                     {% endfor %}
