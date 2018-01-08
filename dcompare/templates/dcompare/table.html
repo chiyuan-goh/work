@@ -12,47 +12,96 @@
 
 
 <div class="container">
-    <h1>Parsed Results</h1>
-
     <div class="row" role="group" arial-label="basic example">
         {#        <button type="button" class="btn btn-secondary">Generate Word Document</button>#}
         <a href="{% url 'compare' %}" role="button" class="btn btn-secondary">Compare Again</a>
     </div>
 
-    <div class="row">
-        <table class="table table-bordered table-hover">
-            <tr>
-                <th></th>
-                {# for each file column #}
-                {% for f in compare_table.filenames %}
-                    <th style="text-align:center">{{ f }}</th>
-                {% endfor %}
+    <h1>Parsed Results</h1>
 
-                {% for section_dict in compare_table.components %}
+    <ul class="nav nav-tabs" role="tablist" data-tabs="tabs">
+
+        {% for section_dict in compare_table.components %}
+            <li class="nav-item">
+                <a class="nav-link {% if forloop.counter0 == 0 %} active {% endif %}"
+                   data-toggle="tab"
+                   href="#{{ forloop.counter0 }}"
+                   role="tab">{{ section_dict.bs_name|title }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <div class="tab-content">
+        {% for section_dict in compare_table.components %}
+            <div class="tab-pane{% if forloop.counter0 == 0 %} active{% endif %}"
+                 id='{{ forloop.counter0 }}'
+                 role="tabpanel">
+                <table class="table table-bordered table-hover">
                     <tr>
-                        <td style="text-align: center"
-                            colspan="{{ compare_table.filenames|length|add:1 }}">{{ section_dict.bs_name }}</td>
-                    </tr>
-                    {% for s in section_dict.sections %}
-                        <tr>
-                            <td>{{ s.section_name }}</td>
-                            {% for clause in s.section %}
-                                <td>
-                                    {% if clause.org_section %}
-                                        <div class="alert alert-info alert-dismissible fade show"  role="alert">
-                                            <small>Clause is in {{ clause.org_section }}.</small>
-                                        </div>
-                                    {% endif %}
-                                    <p>{{ clause.text|replace_newline|safe }} </p>
-                                </td>
-                            {% endfor %}
-                        </tr>
-                    {% endfor %}
-                {% endfor %}
-            </tr>
+                        <th></th>
+                        {# for each file column #}
+                        {% for f in compare_table.filenames %}
+                            <th style="text-align:center">{{ f }}</th>
+                        {% endfor %}
 
-        </table>
+                        {% for s in section_dict.sections %}
+                            <tr>
+                                <td>{{ s.section_name }}</td>
+                                {% for clause in s.section %}
+                                    <td>
+                                        {% if clause.org_section %}
+                                            <div class="alert alert-info alert-dismissible fade show" role="alert">
+                                                <small>Clause is in {{ clause.org_section }}.</small>
+                                            </div>
+                                        {% endif %}
+                                        <p>{{ clause.text|replace_newline|safe }} </p>
+                                    </td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    </tr>
+
+                </table>
+
+            </div>
+        {% endfor %}
+
     </div>
+
+{#        <div class="row">#}
+{#            <table class="table table-bordered table-hover">#}
+{#                <tr>#}
+{#                    <th></th>#}
+{#     for each file column#}
+{#                    {% for f in compare_table.filenames %}#}
+{#                        <th style="text-align:center">{{ f }}</th>#}
+{#                    {% endfor %}#}
+{##}
+{#                    {% for section_dict in compare_table.components %}#}
+{#                        <tr>#}
+{#                            <td style="text-align: center"#}
+{#                                colspan="{{ compare_table.filenames|length|add:1 }}">{{ section_dict.bs_name }}</td>#}
+{#                        </tr>#}
+{#                        {% for s in section_dict.sections %}#}
+{#                            <tr>#}
+{#                                <td>{{ s.section_name }}</td>#}
+{#                                {% for clause in s.section %}#}
+{#                                    <td>#}
+{#                                        {% if clause.org_section %}#}
+{#                                            <div class="alert alert-info alert-dismissible fade show" role="alert">#}
+{#                                                <small>Clause is in {{ clause.org_section }}.</small>#}
+{#                                            </div>#}
+{#                                        {% endif %}#}
+{#                                        <p>{{ clause.text|replace_newline|safe }} </p>#}
+{#                                    </td>#}
+{#                                {% endfor %}#}
+{#                            </tr>#}
+{#                        {% endfor %}#}
+{#                    {% endfor %}#}
+{#                </tr>#}
+{##}
+{#            </table>#}
+{#        </div>#}
 
 
 </div>
