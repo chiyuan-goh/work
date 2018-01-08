@@ -17,3 +17,11 @@
 .hide {
     visibility:hidden;
 }
+
+.hl-clause {
+    background-color: #F8F9E4 !important;
+}
+
+.nav-tabs {
+    margin-bottom: 2rem;
+}

@@ -103,7 +103,7 @@ var drawModal = function(text1, text2, opcodes){
 }
 
 $(document).ready(function(){
-    var selected_cls = 'bg-info';
+    var selected_cls = 'hl-clause';
 
     $("td").click(function(){
         $(this).toggleClass(selected_cls);

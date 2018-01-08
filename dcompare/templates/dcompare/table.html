@@ -8,16 +8,13 @@
 </head>
 
 <body>
-{% include "dcompare/diff_modal.html" %}
 
+{#{% include "dcompare/nav.html" %}#}
 
 <div class="container">
-    <div class="row" role="group" arial-label="basic example">
-        {#        <button type="button" class="btn btn-secondary">Generate Word Document</button>#}
-        <a href="{% url 'compare' %}" role="button" class="btn btn-secondary">Compare Again</a>
-    </div>
+{% include "dcompare/diff_modal.html" %}
 
-    <h1>Parsed Results</h1>
+    <h2>Compare Results</h2>
 
     <ul class="nav nav-tabs" role="tablist" data-tabs="tabs">
 
@@ -36,7 +33,7 @@
             <div class="tab-pane{% if forloop.counter0 == 0 %} active{% endif %}"
                  id='{{ forloop.counter0 }}'
                  role="tabpanel">
-                <table class="table table-bordered table-hover">
+                <table class="table table-bordered">
                     <tr>
                         <th></th>
                         {# for each file column #}
@@ -51,9 +48,12 @@
                                     <td>
                                         {% if clause.org_section %}
                                             <div class="alert alert-info alert-dismissible fade show" role="alert">
-                                                <small>Clause is in {{ clause.org_section }}.</small>
+                                                <small>Actual clause is in {{ clause.org_section }}.</small>
                                             </div>
                                         {% endif %}
+                                        {% if clause.org_name %}
+                                                <small>Actual clause is called {{ clause.org_name }}.</small>
+                                        {% endif  %}
                                         <p>{{ clause.text|replace_newline|safe }} </p>
                                     </td>
                                 {% endfor %}
