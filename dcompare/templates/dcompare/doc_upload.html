@@ -8,17 +8,72 @@
 
 {#{% include "dcompare/nav.html" %}#}
 
-<div class="container">
-    <h4>Select >1 Documents To Compare</h4>
-    <form action="/compare" method="post" enctype="multipart/form-data">
-        <div class="form-group">
-            {% csrf_token %}
-            {{ form }}
-            <button class="btn btn-primary" type="submit">Submit</button>
-        </div>
-    </form>
-</div>
+{#<div class="container">#}
+{#    <h4>Select >1 Documents To Compare</h4>#}
+{#    <form action="/compare" method="post" enctype="multipart/form-data">#}
+{#        <div class="form-group">#}
+{#            {% csrf_token %}#}
+{#            {{ form }}#}
+{#            <button class="btn btn-primary" type="submit">Submit</button>#}
+{#        </div>#}
+{#    </form>#}
+{#</div>#}
 
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="card mx-auto ">
+                <h4 class="card-header">
+                    Compare Contracts
+                </h4>
+                <div class="card-body">
+                    <p class="card-text">Select more than 1 contracts to see what has changed between them. Ideally,
+                        they should be versions of the same tender (e.g recurring contract) so that the comparison is
+                        meaningful.
+                    </p>
+
+                    <p class="card-text">As this app is a work-in-progress and requires no login information at the moment,
+                        any temporary files will be wiped periodically and at no times will any data be saved in the
+                        database.
+                    </p>
+
+                    <form method='post' enctype='multipart/form-data' action=''>
+                        {% csrf_token %}
+                        <div class='file_upload form-group' id='f1'><input name='documents' type='file'/>1</div>
+                        <div id='file_tools'>
+                            <button id='add_file' class="btn btn-success btn-sm" type="button">add</button>
+                            <button id='del_file' class="btn btn-danger btn-sm" type="button">remove</button>
+                        </div>
+                        <hr>
+                        <button type='submit' name='upload' class="btn btn-primary btn-sm float-right">Submit</button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
 {% include "dcompare/tail_static.html" %}
+
+<script type='text/javascript'>
+    $(document).ready(function () {
+        var counter = 2;
+        $('#del_file').hide();
+        $('button#add_file').click(function () {
+            $('#file_tools').before('<div class="file_upload form-group" id="f' + counter + '"><input name="documents" type="file">' + counter + '</div>');
+            $('#del_file').fadeIn(0);
+            counter++;
+        });
+        $('button#del_file').click(function () {
+            if (counter == 3) {
+                $('#del_file').hide();
+            }
+            counter--;
+            $('#f' + counter).remove();
+        });
+    });
+</script>
+
 </body>
 </html>
