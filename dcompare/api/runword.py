@@ -92,22 +92,17 @@ def run2(files, skip_nochange = True):
     #TODO: ideally this should yield {["section name": [{"row name": ["text1", "text2", "text3"]}]]
     """
     Compares tender documents and groups them according to sections and clauses in a table format.
-    Outputs a docx document.
     """
-    ret = {}
-    sect_colors = ['7BA65D', 'B6D6F2', 'D9A9BF', 'D9D9D9']
+    content_key = 'content'
 
     dcom = DocCompare()
     for file1 in files:
         dcom.add_doc(file1)
 
     contents = dcom.all_contents()
-    ret['filenames'] = dcom.documents
 
     # set content rows
     bigsection_names = contents[0].keys()
-
-    count = 0
 
     # each section
     for bs_idx, bs_name in enumerate(bigsection_names):
@@ -145,21 +140,16 @@ def run2(files, skip_nochange = True):
 
                 seqm = difflib.SequenceMatcher(None,
                                                "\n\n".join([process_paragraph(para.text) for para in
-                                                            matched_clauses[compare_indices[0]][0]['section']]),
+                                                            matched_clauses[compare_indices[0]][0][content_key]]),
                                                "\n\n".join([process_paragraph(para.text) for para in
-                                                            matched_clauses[compare_indices[1]][0]['section']])
+                                                            matched_clauses[compare_indices[1]][0][content_key]])
                                                )
                 oc = seqm.get_opcodes()
                 assert len(added_hashes) == 2
 
-                # if header == 'acceptance of tender proposal':
-                #    pdb.set_trace()
-
             c1 = 0
             c2 = 0
             row_text = []
-            print("---------------")
-            # print(matched_clauses)
 
             #for each document what is the matched clause in that document
             for i, m in enumerate(matched_clauses):
@@ -201,7 +191,7 @@ def run2(files, skip_nochange = True):
                 #     #continue
 
                 elif m is not None:
-                    t = t + "\n\n".join([para.text for para in clause_content['section']])
+                    t = t + "\n\n".join([para.text for para in clause_content[content_key]])
 
                 # cur_row[i + 1].text = t
                 # row_text.append(t)
@@ -210,10 +200,6 @@ def run2(files, skip_nochange = True):
             section_contents.append({'section_name':header, 'section': row_text})
 
         yield {'bs_name':bs_name, 'sections': section_contents}
-
-
-    #print("total count: {}".format(count))
-    #summ.save("summary.docx")
 
 
 def run(files, skip_nochange=True):
