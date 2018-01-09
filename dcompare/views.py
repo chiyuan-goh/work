@@ -24,6 +24,8 @@ def display_table(request):
         obj = None
         with open(request.session['compare_obj']) as f:
             obj = json.loads(f.read())
+
+        print(obj['structure'])
         return render(request, template, {'compare_table': obj})
 
 # class DocUploadView(FormView):
@@ -75,8 +77,10 @@ class DocUploadView(FormView):
         if form.is_valid():
             process_files  = [f.temporary_file_path() for f in files]
             filenames = [f.name for f in files]
-            sections =  [s for s in run2(process_files)]
-            save_obj = {'filenames': filenames, 'components': sections}
+            doc_struct = []
+            gen = run2(process_files, doc_struct)
+            sections =  [s for s in gen]
+            save_obj = {'filenames': filenames, 'components': sections, 'structure': doc_struct}
 
             with NamedTemporaryFile(delete = False) as f:
                 f.write(json.dumps(save_obj).encode('utf-8'))

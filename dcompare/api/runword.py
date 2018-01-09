@@ -88,7 +88,7 @@ def style_diffs(para, text, opcodes, is_a):
         
         
         
-def run2(files, skip_nochange = True):
+def run2(files, doc_structures, skip_nochange = True):
     #TODO: ideally this should yield {["section name": [{"row name": ["text1", "text2", "text3"]}]]
     """
     Compares tender documents and groups them according to sections and clauses in a table format.
@@ -100,6 +100,9 @@ def run2(files, skip_nochange = True):
         dcom.add_doc(file1)
 
     contents = dcom.all_contents()
+    dc_copy = [dcom.get_doc_struct(d) for d in contents]
+    for dc in dc_copy:
+        doc_structures.append(dc)
 
     # set content rows
     bigsection_names = contents[0].keys()

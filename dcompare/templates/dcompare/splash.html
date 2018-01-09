@@ -36,11 +36,11 @@
             color: #000;
         }
 
-        .caption span.border {
+        .caption span.border2 {
 {#            background-color: #111;#}
 {#            color: #fff;#}
             padding: 18px;
-            font-size: 25px;
+            font-size: 36px;
             letter-spacing: 10px;
         }
 
@@ -53,15 +53,15 @@
         }
     </style>
 
-
+    {% include "dcompare/head_static.html" %}
 </head>
 <body>
 
 <div class="bgimg-1">
     <div class="caption">
-        <span class="border">LD Contract Management</span>
+        <span class="border2">LD Contract Management</span>
         <br><br>
-        <a href="{% url "compare" %}" class="">Compare Document</a>
+        <a class='btn btn-primary' href="{% url "compare" %}">Compare Document</a>
 
     </div>
 </div>

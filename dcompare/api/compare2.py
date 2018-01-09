@@ -21,29 +21,27 @@ class DocCompare(object):
     """Parses a tender document and return a document in terms of map<big_section, <small_clause, clause_content>>"""
     def __init__(self):
         self.documents = []
+        self.document_struct = []
 
     def parseHeader(self, text):
         try:
             float(text.strip())
+            return True
         except:
             return False
-        return True
 
     def add_doc(self, fname):
         self.documents.append(fname)
 
     def all_contents(self):
-        all_shit = [self.get_content(Document(d)) for d in self.documents]
-        return all_shit
+        all_content = [self.get_content(Document(d)) for d in self.documents]
+        return all_content
 
     def is_clause_header(self, para):
-        text = para.text
-        tabsplit = text.split("\t")
-
         return type(para) == Paragraph and \
-               self.parseHeader(tabsplit[0]) and \
-               (text.isupper() or para.style.font.all_caps is True) and \
-               len(tabsplit) > 1
+               self.parseHeader(para.text.split("\t")[0]) and \
+               (para.text.isupper() or para.style.font.all_caps is True) and \
+               len(para.text.split("\t")) > 1
         
     def is_section_header(self, block):
         return type(block) == Table and \
@@ -55,6 +53,30 @@ class DocCompare(object):
         text = block.rows[0].cells[0].text
         h = text.split(":")[1].strip()
         return h.lower() in ITT_SECTIONS, text.strip()
+
+    def is_new_term(self, block):
+        return self.parseHeader(block.text.split("\t")[0])
+
+    def get_doc_struct(self, doc):
+        """
+        Gives an overview of the documents structure e.g name of sections, clauses and number of terms in clause
+        :param doc:
+        :return:
+        """
+        doc_struct = {}
+        for section, section_content in doc.items():
+            clauses = {}
+            for clause, content in section_content.items():
+                count_terms = 0
+                for p in content['content']:
+                    if self.is_new_term(p):
+                        count_terms += 1
+
+                clauses[clause] = {'num_para':count_terms, 'num': content['num']}
+
+            doc_struct[section] = clauses
+
+        return doc_struct
 
         
     def get_content(self, doc):
@@ -75,7 +97,7 @@ class DocCompare(object):
             if is_sheader:
                 if section_header != None:
                     if clause_header is not None and clause_content:
-                        clauses[clause_header] = {content_str: clause_content}
+                        clauses[clause_header] = {content_str: clause_content, 'num': clause_num}
                     sections[section_header] = clauses
                 
                 valid, h = self.is_valid_section(p)
@@ -91,16 +113,20 @@ class DocCompare(object):
             #reach a new clause
             elif is_cheader:
                 if len(clause_content) != 0 and clause_header is not None:
-                    clauses[clause_header] = {content_str: clause_content}
-                
-                clause_header = p.text.split("\t")[1].strip().lower()
+                    clauses[clause_header] = {content_str: clause_content, 'num': clause_num}
+                # x =  p.text.split("\t")
+                #[clause_num, clause_header] = p.text.split("\t")
+                arr = p.text.split("\t")
+                clause_num = arr[0]
+                clause_header = arr[1]
+                clause_header = clause_header.strip().lower()
                 clause_content = []
             
             else:
                 if type(p) == Paragraph and p.text.strip() != '':
                     clause_content.append(p)
 
-        clauses[clause_header] = {content_str: clause_content}
+        clauses[clause_header] = {content_str: clause_content, 'num': clause_num}
         if section_header != None:
             sections[section_header] = clauses
             

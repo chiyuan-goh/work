@@ -16,7 +16,8 @@
 
     <div class="alert alert-success alert-dismissible fade show" role="alert">
         <h4 class="alert-heading">Compared!</h4>
-        <p>The document-by-document comparison is listed below, grouped by Sections in the separate tabs and their respective clauses.
+        <p>The document-by-document comparison is listed below, grouped by Sections in the separate tabs and their
+            respective clauses.
             Whenever a clause is moved or named differently, we will let you know.</p>
         <hr>
         <p class="mb-0">To compare a pair of texts, click to select their <span class="hl-clause">respective cell</span>,
@@ -28,21 +29,57 @@
     </div>
 
     <ul class="nav nav-tabs" role="tablist" data-tabs="tabs">
-
+        <li class="nav-item">
+            <a class="nav-link active"
+               data-toggle="tab"
+               href="#0"
+               role="tab">At A Glance</a>
+        </li>
         {% for section_dict in compare_table.components %}
             <li class="nav-item">
-                <a class="nav-link {% if forloop.counter0 == 0 %} active {% endif %}"
+                <a class="nav-link"
                    data-toggle="tab"
-                   href="#{{ forloop.counter0 }}"
+                   href="#{{ forloop.counter }}"
                    role="tab">{{ section_dict.bs_name|title }}</a>
             </li>
         {% endfor %}
     </ul>
 
     <div class="tab-content">
+        <div class="tab-pane active"
+             id='0'
+             role="tabpanel">
+            <table class="table table-bordered">
+                <tr>{# for each file column #}
+                    {% for f in compare_table.filenames %}
+                        <th style="text-align:center">{{ f }}</th>
+                    {% endfor %}
+
+                </tr>
+                <tr>
+                    {% for doc_structure in compare_table.structure %}
+                        <td>
+                            <ul>
+                                {% for sect, sect_items in doc_structure.items %}
+                                    <li>
+                                        {{ sect|title }}
+                                        <ul>
+                                            {% for clause, d in sect_items.items %}
+                                                <li>{{ d.num }} {{ clause|title }} <span class="badge badge-pill badge-info">{{ d.num_para }}</span></li>
+                                            {% endfor %}
+                                        </ul>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                    {% endfor %}
+                </tr>
+            </table>
+        </div>
+
         {% for section_dict in compare_table.components %}
-            <div class="tab-pane{% if forloop.counter0 == 0 %} active{% endif %}"
-                 id='{{ forloop.counter0 }}'
+            <div class="tab-pane"
+                 id='{{ forloop.counter }}'
                  role="tabpanel">
                 <table class="table table-bordered">
                     <tr>
@@ -51,26 +88,27 @@
                         {% for f in compare_table.filenames %}
                             <th style="text-align:center">{{ f }}</th>
                         {% endfor %}
-
-                        {% for s in section_dict.sections %}
-                            <tr>
-                                <td>{{ s.section_name }}</td>
-                                {% for clause in s.section %}
-                                    <td>
-                                        {% if clause.org_section %}
-                                            <div class="alert alert-info alert-dismissible fade show" role="alert">
-                                                <small>Actual clause is in {{ clause.org_section }}.</small>
-                                            </div>
-                                        {% endif %}
-                                        {% if clause.org_name %}
-                                            <small>Actual clause is called {{ clause.org_name }}.</small>
-                                        {% endif %}
-                                        <p>{{ clause.text|replace_newline|safe }} </p>
-                                    </td>
-                                {% endfor %}
-                            </tr>
-                        {% endfor %}
                     </tr>
+
+
+                    {% for s in section_dict.sections %}
+                        <tr>
+                            <td>{{ s.section_name }}</td>
+                            {% for clause in s.section %}
+                                <td>
+                                    {% if clause.org_section %}
+                                        <div class="alert alert-info alert-dismissible fade show" role="alert">
+                                            <small>Actual clause is in {{ clause.org_section }}.</small>
+                                        </div>
+                                    {% endif %}
+                                    {% if clause.org_name %}
+                                        <small>Actual clause is called {{ clause.org_name }}.</small>
+                                    {% endif %}
+                                    <p>{{ clause.text|replace_newline|safe }} </p>
+                                </td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
 
                 </table>
 
